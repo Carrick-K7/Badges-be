@@ -2,13 +2,19 @@ package com.badges.badges.service;
 
 import com.badges.badges.mapper.UserMapper;
 import com.badges.badges.pojo.DTO.LoginDto;
+import com.badges.badges.pojo.DTO.UserRequestDto;
+import com.badges.badges.pojo.VO.TagVo;
 import com.badges.badges.pojo.PO.User;
+import com.badges.badges.pojo.VO.ProjectVo;
+import com.badges.badges.pojo.VO.UserInfoVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 @Slf4j
@@ -19,11 +25,6 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserMapper userMapper;
-
-    @Override
-    public User findUserByName(String username) {
-        return userMapper.findUserByUsername(username);
-    }
 
     public int register(LoginDto loginDto) {
         Map<String, Object> map = new HashMap<>();
@@ -38,4 +39,22 @@ public class UserServiceImpl implements UserService {
         }
         return 0;
     }
+
+    @Override
+    public User findUserByName(String username) {
+        return userMapper.findUserByUsername(username);
+    }
+
+    @Override
+    public UserInfoVo findUserInfoByName(UserRequestDto dto) {
+        UserInfoVo userInfoVo = userMapper.getUserInfo(dto);
+        long userId = userInfoVo.getUserId();
+        List<ProjectVo> projectList = userMapper.getProjectByUserId(userId);
+        List<TagVo> tagList = userMapper.getTagByUserId(userId);
+        userInfoVo.setProjectList(projectList);
+        userInfoVo.setTagList(tagList);
+        return userInfoVo;
+    }
+
+
 }

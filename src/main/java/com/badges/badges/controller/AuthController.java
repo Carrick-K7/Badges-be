@@ -14,7 +14,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping()
 public class AuthController {
     @Autowired
     private UserServiceImpl userService;

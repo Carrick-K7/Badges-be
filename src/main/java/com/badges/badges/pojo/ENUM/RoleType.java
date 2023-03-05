@@ -1,7 +1,8 @@
 package com.badges.badges.pojo.ENUM;
 
 public enum RoleType {
-    ADMIN("admin"), USER("user");
+    ADMIN("admin"),
+    USER("user");
 
     private final String roleName;
 

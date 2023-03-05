@@ -12,4 +12,59 @@
     <select id="findUserByUsername" resultMap="user">
         select * from user where username = #{username}
     </select>
+    <select id="getIdByUsername" resultType="java.lang.Long">
+        select id from user where username = #{dto.username}
+    </select>
+    <select id="getTagByUserId" resultType="com.badges.badges.pojo.VO.TagVo">
+        select distinct tag.name
+        from tag
+        where tag.project_id in (select id
+                                 from project
+                                 where project.user_id = #{userId})
+    </select>
+
+    <resultMap id="project" type="com.badges.badges.pojo.VO.ProjectVo">
+        <result property="name" column="name" />
+        <result property="idx" column="idx_in_user" />
+        <result property="progress" column="progress" />
+        <result property="pattern" column="pattern" />
+        <result property="bgColor" column="background_color" />
+        <collection property="tagList" ofType="com.badges.badges.pojo.VO.TagVo">
+            <result property="name" column="tag_name" />
+            <result property="projectId" column="tag_project_id" />
+        </collection>
+        <collection property="krList" ofType="com.badges.badges.pojo.VO.KrVo">
+            <result property="content" column="kr_name" />
+            <result property="status" column="status" />
+            <result property="idx" column="idx_in_project" />
+        </collection>
+    </resultMap>
+    <select id="getProjectByUserId" resultMap="project">
+        select project.name,
+               project.idx_in_user,
+               project.progress,
+               tag.name as tag_name,
+               tag.project_id as tag_project_id,
+               kr.name as kr_name,
+               kr.status as status,
+               kr.idx_in_project,
+               badge.pattern,
+               badge.background_color
+        from project
+            left join tag
+                on project.id = tag.project_id
+            left join kr
+                on project.id = kr.project_id
+            left join badge
+                on project.id = badge.project_id
+        where user_id = #{userId}
+    </select>
+    <select id="getUserInfo" resultType="com.badges.badges.pojo.VO.UserInfoVo">
+        select id as user_id,
+               username as user_name,
+               email,
+               avatar_path as avatar
+        from user
+        where user.username = #{username}
+    </select>
 </mapper>
